@@ -1,5 +1,5 @@
 /.gradio
-*.ipynb
+#*.ipynb
 model_for_finetuning/
 test_scripts/
 *.jpg
