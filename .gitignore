@@ -3,3 +3,5 @@
 model_for_finetuning/
 test_scripts/
 *.jpg
+
+finetuned_model.zip
