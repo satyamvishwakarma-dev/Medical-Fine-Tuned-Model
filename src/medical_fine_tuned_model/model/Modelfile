@@ -1,4 +1,4 @@
-FROM ./biomistral-merged
+FROM ./biomistral-med-q4_k_m.gguf
 
 TEMPLATE """### Instruction:
 {{ .Prompt }}

@@ -5,4 +5,4 @@ test_scripts/
 *.jpg
 
 finetuned_model.zip
-biomistral-med-q4_k_m (1).gguf
+biomistral-med-q4_k_m.gguf
