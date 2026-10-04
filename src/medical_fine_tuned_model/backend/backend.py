@@ -53,7 +53,7 @@ class ChatRequest(BaseModel):
 async def health_check():
     """Check Ollama connectivity and verify biomistral-med model status."""
     try:
-        async with httpx.AsyncClient(timeout=4.0) as client:
+        async with httpx.AsyncClient(timeout=4.0) as client: # type: ignore
             resp = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
             if resp.status_code == 200:
                 data = resp.json()
@@ -106,7 +106,7 @@ async def stream_ollama_generator(request_data: ChatRequest) -> AsyncGenerator[s
         }
     }
 
-    async with httpx.AsyncClient(timeout=180.0) as client:
+    async with httpx.AsyncClient(timeout=180.0) as client: # type: ignore
         try:
             async with client.stream(
                 "POST",
@@ -140,7 +140,7 @@ async def stream_ollama_generator(request_data: ChatRequest) -> AsyncGenerator[s
                                 break
                         except json.JSONDecodeError:
                             continue
-        except httpx.ConnectError:
+        except httpx.ConnectError: # type: ignore
             err_data = json.dumps({"error": "Cannot connect to Ollama at http://localhost:11434. Please start the Ollama application."})
             yield f"data: {err_data}\n\n"
         except Exception as exc:
