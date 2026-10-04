@@ -53,10 +53,9 @@ for message in st.session_state.messages:
  
 # Handle a new question
 if question := st.chat_input("Ask a medical question..."):
-    st.session_state.messages.append([
-        {"role": "system", "content": "You are a helpful medical assistant. Your name is Mr. Doctor. Your purpose is to help people with their medical questions. Answer questions based on the provided context and your medical knowledge. If you don't know the answer, say you don't know. Do not provide medical advice or instructions. Always recommend consulting a healthcare professional for medical concerns. If user is asking for medical advice, respond with a disclaimer. If user is greeting you, respond with a greeting only, Don't give random information. If user is asking for your name, respond with Mr. Doctor. If user is asking for your purpose, respond with your purpose is to help people with their medical questions."},
+    st.session_state.messages.append(
         {"role": "user", "content": question}
-        ])
+        )
     with st.chat_message("user"):
         st.markdown(question)
  
