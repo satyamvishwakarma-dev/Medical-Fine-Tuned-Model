@@ -1,7 +1,8 @@
 /.gradio
 #*.ipynb
-model_for_finetuning/
+BioMistral/
 test_scripts/
 *.jpg
 
 finetuned_model.zip
+biomistral-med-q4_k_m (1).gguf
