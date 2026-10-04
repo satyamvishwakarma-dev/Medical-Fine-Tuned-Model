@@ -1,0 +1,1365 @@
+/* ==========================================================================
+   BioMistral Clinical Q&A - Dark Glassmorphic Medical Design System
+   Full-Screen Edge-to-Edge Canvas with Frosted Glass & Neon Medical Glows
+   ========================================================================== */
+
+:root {
+  /* Ultra-Dark Obsidian Medical Palette */
+  --bg-app: #030712;
+  --bg-surface: #040814;
+  --bg-surface-elevated: rgba(10, 16, 31, 0.7);
+  --bg-surface-glass: rgba(4, 8, 20, 0.72);
+  --bg-card-glass: rgba(8, 14, 28, 0.65);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-clinical: rgba(51, 65, 85, 0.6);
+  --border-glass: rgba(6, 182, 212, 0.22);
+  --border-focus: #06b6d4;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  /* Clinical Accents & Neon Glows */
+  --med-cyan: #06b6d4;
+  --med-cyan-bright: #22d3ee;
+  --med-cyan-glow: rgba(6, 182, 212, 0.55);
+  --med-cyan-ambient: rgba(6, 182, 212, 0.12);
+  
+  --med-teal: #0d9488;
+  --med-teal-light: #14b8a6;
+  --med-teal-glow: rgba(20, 184, 166, 0.6);
+
+  --med-blue: #2563eb;
+  --med-blue-bright: #38bdf8;
+  --med-blue-glow: rgba(37, 99, 235, 0.5);
+
+  --med-purple-glow: rgba(168, 85, 247, 0.55);
+
+  /* Status & Clinical Alerts */
+  --status-online: #10b981;
+  --status-online-glow: rgba(16, 185, 129, 0.65);
+  --status-warning: #f59e0b;
+  --status-error: #ef4444;
+  --status-error-glow: rgba(239, 68, 68, 0.7);
+  --status-checking: #06b6d4;
+
+  --disclaimer-bg: rgba(245, 158, 11, 0.08);
+  --disclaimer-border: rgba(245, 158, 11, 0.28);
+  --disclaimer-text: #fde68a;
+
+  /* User & Assistant Bubble Colors */
+  --msg-user-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.85));
+  --msg-user-border: rgba(59, 130, 246, 0.3);
+  --msg-bot-bg: rgba(6, 11, 24, 0.75);
+  --msg-bot-border: rgba(6, 182, 212, 0.25);
+
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --shadow-glass-lg: 0 16px 48px 0 rgba(0, 0, 0, 0.75);
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+[data-theme="light"] {
+  --bg-app: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: rgba(255, 255, 255, 0.85);
+  --bg-surface-glass: rgba(255, 255, 255, 0.8);
+  --bg-card-glass: rgba(255, 255, 255, 0.75);
+  --border-subtle: rgba(203, 213, 225, 0.8);
+  --border-clinical: #cbd5e1;
+  --border-glass: rgba(8, 145, 178, 0.25);
+  --border-focus: #0891b2;
+
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+
+  --med-cyan: #0891b2;
+  --med-cyan-bright: #0284c7;
+  --med-cyan-glow: rgba(8, 145, 178, 0.4);
+  --med-cyan-ambient: rgba(8, 145, 178, 0.1);
+  --med-teal: #0f766e;
+  --med-teal-light: #0d9488;
+  --med-teal-glow: rgba(13, 148, 136, 0.4);
+
+  --disclaimer-bg: rgba(254, 243, 199, 0.85);
+  --disclaimer-border: #fcd34d;
+  --disclaimer-text: #92400e;
+
+  --msg-user-bg: rgba(226, 232, 240, 0.85);
+  --msg-user-border: rgba(148, 163, 184, 0.5);
+  --msg-bot-bg: rgba(255, 255, 255, 0.85);
+  --msg-bot-border: rgba(8, 145, 178, 0.3);
+
+  --shadow-glass: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-glass-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  /* Ambient Dark Medical Void Glow Background */
+  background-image: 
+    radial-gradient(circle at 12% 15%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 88% 85%, rgba(13, 148, 136, 0.07) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 0.8) 0%, #030712 100%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  line-height: 1.55;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Full Screen App Layout (100% Edge-to-Edge)
+   ========================================================================== */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Frosted Glass Clinical Title Bar (Header)
+   ========================================================================== */
+.clinical-header {
+  height: 72px;
+  width: 100%;
+  padding: 0 2.5rem;
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border-bottom: 1px solid rgba(6, 182, 212, 0.18);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Logo Shield with Glow */
+.logo-shield {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, var(--med-teal), var(--med-cyan));
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 0 20px var(--med-cyan-glow), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo-shield:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px var(--med-cyan-bright), 0 0 50px var(--med-cyan-glow);
+}
+
+.med-cross-icon {
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.title-row h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.model-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(6, 182, 212, 0.14);
+  color: var(--med-cyan-bright);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+}
+
+.subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.ecg-pulse-svg {
+  width: 44px;
+  height: 14px;
+}
+
+.ecg-path {
+  fill: none;
+  stroke: var(--med-cyan-bright);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  filter: drop-shadow(0 0 5px var(--med-cyan-bright));
+  animation: ecgStroke 2.2s linear infinite;
+}
+
+@keyframes ecgStroke {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Status Pill with Glass & Neon Glow */
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-pill.online {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+.status-pill.online .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 12px var(--status-online-glow);
+  animation: pulseGreen 2s infinite;
+}
+
+.status-pill.offline {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+.status-pill.offline .status-dot {
+  background: #ef4444;
+  box-shadow: 0 0 10px var(--status-error-glow);
+}
+
+.status-pill.checking {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #22d3ee;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+}
+.status-pill.checking .status-dot {
+  background: #06b6d4;
+  box-shadow: 0 0 10px var(--med-cyan-glow);
+  animation: pulseGreen 1s infinite;
+}
+
+@keyframes pulseGreen {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+/* ==========================================================================
+   Header Buttons with Neon Hover Glow
+   ========================================================================== */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* Icon Buttons (Theme & Settings) */
+.icon-btn {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Theme Toggle Glow */
+#themeToggleBtn:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: #c084fc;
+  color: #e9d5ff;
+  box-shadow: 0 0 20px var(--med-purple-glow), 0 0 35px rgba(168, 85, 247, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Settings Button Glow */
+#settingsBtn:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--med-cyan-bright);
+  color: #a5f3fc;
+  box-shadow: 0 0 22px var(--med-cyan-glow), 0 0 40px rgba(6, 182, 212, 0.25);
+  transform: translateY(-2px) rotate(25deg);
+}
+
+.icon {
+  width: 19px;
+  height: 19px;
+  transition: transform 0.2s ease;
+}
+
+/* New Session Button Glow */
+#clearChatBtn {
+  background: rgba(13, 148, 136, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(20, 184, 166, 0.4);
+  color: #2dd4bf;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#clearChatBtn:hover {
+  background: rgba(13, 148, 136, 0.3);
+  border-color: #14b8a6;
+  color: #5eead4;
+  box-shadow: 0 0 24px var(--med-teal-glow), 0 0 45px rgba(13, 148, 136, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Frosted Glass Medical Disclaimer Strip
+   ========================================================================== */
+.medical-disclaimer-strip {
+  background: var(--disclaimer-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--disclaimer-border);
+  color: var(--disclaimer-text);
+  padding: 0.65rem 2.5rem;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  z-index: 25;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.disclaimer-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  line-height: 1.45;
+}
+
+.disclaimer-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: currentColor;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
+}
+
+.disclaimer-dismiss {
+  background: transparent;
+  border: none;
+  color: currentColor;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0 6px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+.disclaimer-dismiss:hover {
+  opacity: 1;
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   Full-Screen Scrollable Consultation Area
+   ========================================================================== */
+.chat-container {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding: 2rem 3rem 8rem 3rem;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Custom Medical Cyan Scrollbar */
+.chat-container::-webkit-scrollbar {
+  width: 9px;
+}
+.chat-container::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.5);
+}
+.chat-container::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.7);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background: var(--med-cyan);
+  box-shadow: 0 0 10px var(--med-cyan-glow);
+}
+
+/* ==========================================================================
+   Frosted Glass Welcome / Triage Card
+   ========================================================================== */
+.welcome-card {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto 1.5rem auto;
+  background: var(--bg-card-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 2.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 25px rgba(6, 182, 212, 0.05);
+}
+
+.welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(6, 182, 212, 0.12);
+  color: var(--med-cyan-bright);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+}
+
+.badge-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.welcome-card h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.65rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.welcome-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 850px;
+  margin-bottom: 1.75rem;
+  line-height: 1.6;
+}
+
+/* Glass Specs Grid */
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.spec-item {
+  background: rgba(5, 9, 20, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: all 0.25s ease;
+}
+
+.spec-item:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+  transform: translateY(-1px);
+}
+
+.spec-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.spec-val {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   Prompt Chips with Neon Glowing Hover
+   ========================================================================== */
+.quick-prompts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.quick-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.chip {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  color: var(--text-muted);
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Neon Glow on Chip Hover */
+.chip:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--med-cyan-bright);
+  color: #e0f2fe;
+  box-shadow: 0 0 22px var(--med-cyan-glow), 0 4px 15px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Messages Feed & Frosted Glass Message Cards
+   ========================================================================== */
+.messages-feed {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.message-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* User Message Card */
+.message-card.user {
+  align-self: flex-end;
+  max-width: 80%;
+}
+
+.message-card.user .msg-content-wrapper {
+  background: var(--msg-user-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--msg-user-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 3px var(--radius-lg);
+  padding: 1.15rem 1.45rem;
+  color: var(--text-main);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  font-size: 0.96rem;
+}
+
+.message-card.user .msg-sender-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  justify-content: flex-end;
+  padding-right: 0.35rem;
+}
+
+/* BioMistral Assistant Message Card */
+.message-card.assistant {
+  align-self: flex-start;
+  width: 100%;
+}
+
+.message-card.assistant .msg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.assistant-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.assistant-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--med-teal), var(--med-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 0 15px var(--med-cyan-glow);
+}
+
+.assistant-avatar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.assistant-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--med-cyan-bright);
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+.assistant-badge {
+  font-size: 0.7rem;
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--med-cyan-bright);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 1px 7px;
+  border-radius: var(--radius-sm);
+}
+
+.assistant-timestamp {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.message-card.assistant .msg-content-wrapper {
+  background: var(--msg-bot-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--msg-bot-border);
+  border-left: 4px solid var(--med-cyan);
+  border-radius: var(--radius-lg);
+  padding: 1.45rem 1.75rem;
+  color: var(--text-main);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(6, 182, 212, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+/* Markdown / Text Formatting in Assistant Bubble */
+.prose {
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+.prose p {
+  margin-bottom: 0.95rem;
+}
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+.prose ul, .prose ol {
+  margin: 0.7rem 0 1rem 1.75rem;
+}
+
+.prose li {
+  margin-bottom: 0.4rem;
+}
+
+.prose strong {
+  color: var(--med-cyan-bright);
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: var(--text-main);
+  font-weight: 700;
+  margin: 1.3rem 0 0.6rem 0;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: #38bdf8;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--med-teal);
+  padding-left: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0.85rem 0;
+  background: rgba(13, 148, 136, 0.08);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+/* Real-Time Typing Cursor */
+.typing-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 17px;
+  background-color: var(--med-cyan-bright);
+  box-shadow: 0 0 10px var(--med-cyan-bright);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Action Footer on Assistant Card */
+.msg-action-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.metrics-tag {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Mini Action (Copy) Button Glow */
+.mini-action-btn {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.25s ease;
+}
+
+.mini-action-btn:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--med-cyan-bright);
+  color: #67e8f9;
+  box-shadow: 0 0 16px var(--med-cyan-glow);
+  transform: translateY(-1px);
+}
+
+.mini-action-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ==========================================================================
+   Floating Scroll-To-Bottom Pill with Neon Glow
+   ========================================================================== */
+.scroll-bottom-pill {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8, 14, 28, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--med-cyan-bright);
+  color: var(--text-main);
+  box-shadow: 0 0 25px var(--med-cyan-glow), 0 8px 24px rgba(0, 0, 0, 0.6);
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  z-index: 35;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: bounceDown 2.2s infinite;
+}
+
+.scroll-bottom-pill:hover {
+  background: rgba(6, 182, 212, 0.25);
+  border-color: #67e8f9;
+  box-shadow: 0 0 35px var(--med-cyan-bright), 0 0 55px var(--med-cyan-glow);
+  transform: translate(-50%, -3px) scale(1.05);
+}
+
+.scroll-bottom-pill svg {
+  width: 15px;
+  height: 15px;
+  color: var(--med-cyan-bright);
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -5px); }
+}
+
+/* ==========================================================================
+   Frosted Glass Sticky Bottom Input Dock
+   ========================================================================== */
+.input-dock {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border-top: 1px solid rgba(6, 182, 212, 0.18);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 1rem 3rem 0.85rem 3rem;
+  z-index: 30;
+}
+
+.input-dock-inner {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* Glass Input Box */
+.input-box-wrapper {
+  background: rgba(8, 14, 28, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.85rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+}
+
+.input-box-wrapper:focus-within {
+  border-color: var(--med-cyan-bright);
+  box-shadow: 0 0 25px var(--med-cyan-glow), inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  background: rgba(10, 18, 36, 0.85);
+}
+
+.input-prefix-icon {
+  color: var(--text-dim);
+  padding-bottom: 0.45rem;
+  transition: color 0.2s ease;
+}
+
+.input-box-wrapper:focus-within .input-prefix-icon {
+  color: var(--med-cyan-bright);
+  filter: drop-shadow(0 0 8px var(--med-cyan-bright));
+}
+
+.input-prefix-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.medical-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 0.96rem;
+  line-height: 1.5;
+  resize: none;
+  max-height: 150px;
+  padding: 0.4rem 0;
+}
+
+.medical-textarea:focus {
+  outline: none;
+}
+
+.action-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.2rem;
+}
+
+/* Send Button with Vivid Cyan Neon Glow on Hover */
+.btn-send {
+  background: linear-gradient(135deg, var(--med-teal), var(--med-cyan));
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px var(--med-cyan-glow);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.btn-send:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 0 25px var(--med-cyan-bright), 0 0 50px var(--med-cyan-glow), inset 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.btn-send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-send svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* Stop Stream Button with Emergency Red Glow on Hover */
+.btn-stop {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-stop:hover {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 0 28px var(--status-error-glow), 0 0 50px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-stop svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Meta Bar under Input */
+.input-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  padding: 0 0.5rem;
+}
+
+.hint-text kbd {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.meta-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Export Transcript Link with Glow */
+.text-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  transition: all 0.2s ease;
+}
+
+.text-link-btn:hover {
+  color: #38bdf8;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+}
+
+.small-icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* ==========================================================================
+   Frosted Glass Settings Modal
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: var(--bg-surface-elevated);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 35px rgba(6, 182, 212, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  animation: popIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  padding: 1.25rem 1.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.modal-title h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #f87171;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+  transform: scale(1.15);
+}
+
+.modal-body {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.param-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.param-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.param-info label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.param-hint {
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+.param-control {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.param-control input[type="range"] {
+  flex: 1;
+  accent-color: var(--med-cyan-bright);
+}
+
+.param-val {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--med-cyan-bright);
+  min-width: 48px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.param-diagnostic {
+  background: rgba(5, 9, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.15rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.diag-header {
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.modal-footer {
+  padding: 1.15rem 1.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.85rem;
+}
+
+/* Modal Primary Button with Glow */
+.btn-primary {
+  background: linear-gradient(135deg, var(--med-teal), var(--med-cyan));
+  color: white;
+  box-shadow: 0 0 15px var(--med-cyan-glow);
+  padding: 0.5rem 1.15rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 28px var(--med-cyan-bright), 0 0 45px var(--med-cyan-glow);
+  transform: translateY(-2px);
+}
+
+/* Modal Secondary Button with Glow */
+.btn-secondary {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  padding: 0.5rem 1.15rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Utility Helpers */
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .clinical-header {
+    padding: 0 1.5rem;
+  }
+  .chat-container {
+    padding: 1.5rem 1.5rem 7.5rem 1.5rem;
+  }
+  .input-dock {
+    padding: 0.85rem 1.5rem 0.65rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .clinical-header {
+    padding: 0 1rem;
+    height: 64px;
+  }
+  .header-title-group h1 {
+    font-size: 1.05rem;
+  }
+  .subtitle-row, .status-pill .status-text {
+    display: none;
+  }
+  .medical-disclaimer-strip {
+    padding: 0.5rem 1rem;
+    font-size: 0.74rem;
+  }
+  .chat-container {
+    padding: 1rem 1rem 7.5rem 1rem;
+  }
+  .welcome-card {
+    padding: 1.5rem;
+  }
+  .welcome-card h2 {
+    font-size: 1.3rem;
+  }
+  .specs-grid {
+    grid-template-columns: 1fr;
+  }
+  .message-card.user {
+    max-width: 92%;
+  }
+  .input-dock {
+    padding: 0.65rem 1rem 0.5rem 1rem;
+  }
+  .input-meta-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}

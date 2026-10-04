@@ -1,10 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioMistral Clinical Q&A | AI Medical Assistant</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306b6d4'><path d='M19 10.5h-5.5V5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v5.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h5.5V19c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5.5H19c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z'/></svg>">
+  <link rel="stylesheet" href="style.css">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+  <!-- Main Application Wrapper -->
+  <div class="app-layout">
+    
+    <!-- Pinned Clinical Header -->
+    <header class="clinical-header">
+      <div class="header-left">
+        <div class="logo-shield">
+          <svg class="med-cross-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 10.5h-5.5V5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v5.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h5.5V19c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5.5H19c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z"/>
+          </svg>
+          <div class="ecg-ring"></div>
+        </div>
+        <div class="header-title-group">
+          <div class="title-row">
+            <h1>BioMistral Clinical Q&A</h1>
+            <span class="badge model-tag">BioMistral-7B QLoRA</span>
+          </div>
+          <div class="subtitle-row">
+            <span class="pulse-line-wrapper">
+              <svg class="ecg-pulse-svg" viewBox="0 0 100 20">
+                <path class="ecg-path" d="M0,10 L30,10 L35,2 L40,18 L45,6 L50,14 L55,10 L100,10" />
+              </svg>
+            </span>
+            <span class="subtitle-text">Local Medical Decision Support AI</span>
+          </div>
+        </div>
+      </div>
 
+      <div class="header-right">
+        <!-- Live System Status Indicator -->
+        <div id="statusBadge" class="status-pill checking" title="Checking Ollama backend connection...">
+          <span class="status-dot"></span>
+          <span class="status-text">Checking Service...</span>
+        </div>
+
+        <!-- Controls: Settings & Theme -->
+        <div class="header-actions">
+          <button id="themeToggleBtn" class="icon-btn" title="Toggle Light / Dark Clinical Theme" aria-label="Toggle Theme">
+            <svg id="themeIconDark" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg id="themeIconLight" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+
+          <button id="settingsBtn" class="icon-btn" title="Inference Parameters (Temperature, Max Tokens)" aria-label="Inference Settings">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+
+          <button id="clearChatBtn" class="btn btn-secondary" title="Start new clinical consultation">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            <span>New Session</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Persistent Medical Disclaimer Banner -->
+    <div class="medical-disclaimer-strip">
+      <div class="disclaimer-content">
+        <svg class="disclaimer-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+        </svg>
+        <span class="disclaimer-text">
+          <strong>CLINICAL DISCLAIMER:</strong> This AI system is for educational & research evaluation only. It is not an accredited medical device and does <em>not</em> provide formal medical advice, diagnosis, or emergency care. Always consult qualified healthcare professionals.
+        </span>
+      </div>
+      <button class="disclaimer-dismiss" title="Hide disclaimer temporarily" aria-label="Dismiss">&times;</button>
+    </div>
+
+    <!-- Scrollable Consultation Area -->
+    <main class="chat-container" id="chatContainer">
+      
+      <!-- Welcome Triage Hero -->
+      <section class="welcome-card" id="welcomeCard">
+        <div class="welcome-badge">
+          <svg class="badge-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+          <span>Clinical Reasoning Engine Initialized</span>
+        </div>
+        
+        <h2>Welcome to BioMistral Clinical Assistant</h2>
+        <p class="welcome-desc">
+          Trained on PubMed Central medical literature and clinical Q&A benchmarks using 4-bit QLoRA. Enter symptoms, pharmacotherapy queries, or medical differential questions below.
+        </p>
+
+        <!-- Model Specs Ribbon -->
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-label">Base Architecture</span>
+            <span class="spec-val">BioMistral-7B (Mistral PMC)</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Fine-Tuning Method</span>
+            <span class="spec-val">QLoRA (NF4 + LoRA r=16)</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Execution Mode</span>
+            <span class="spec-val">Ollama Local (Q4_K_M GGUF)</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Prompt Template</span>
+            <span class="spec-val">Instruction / Input / Response</span>
+          </div>
+        </div>
+
+        <!-- Quick Clinical Prompt Chips -->
+        <div class="quick-prompts-section">
+          <span class="quick-title">Quick Clinical Explorations:</span>
+          <div class="prompt-chips">
+            <button class="chip" data-prompt="What are the hallmark symptoms and diagnostic criteria for Type 2 Diabetes?">
+              🩺 Type 2 Diabetes Diagnosis
+            </button>
+            <button class="chip" data-prompt="What are the first-line antihypertensive medications for an adult with stage 1 hypertension and no comorbidities?">
+              💊 First-line Antihypertensives
+            </button>
+            <button class="chip" data-prompt="What are the clinical red flag signs in pediatric patients presenting with acute fever?">
+              🌡️ Pediatric Fever Red Flags
+            </button>
+            <button class="chip" data-prompt="Explain the mechanism of action, contraindications, and lactic acidosis risk of Metformin.">
+              🧪 Metformin Mechanism & Risks
+            </button>
+            <button class="chip" data-prompt="What is the differential diagnosis for acute onset pleuritic chest pain in a young adult?">
+              🫁 Pleuritic Chest Pain Differential
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Message Stream Feed -->
+      <div class="messages-feed" id="messagesFeed">
+        <!-- Messages dynamically inserted here -->
+      </div>
+
+    </main>
+
+    <!-- Floating Scroll-To-Bottom Pill -->
+    <button id="scrollToBottomBtn" class="scroll-bottom-pill hidden" title="Scroll down to latest response">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 5v14M19 12l-7 7-7-7"/>
+      </svg>
+      <span>Latest Update</span>
+    </button>
+
+    <!-- Sticky Bottom Input Section -->
+    <footer class="input-dock">
+      <div class="input-dock-inner">
+        <form id="chatForm" class="query-form">
+          <div class="input-box-wrapper">
+            <div class="input-prefix-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+            </div>
+            
+            <textarea 
+              id="userInput" 
+              class="medical-textarea" 
+              placeholder="Inquire clinical question, symptomatology, or drug guidance... (Enter to send, Shift+Enter for newline)"
+              rows="1"
+              autofocus
+            ></textarea>
+
+            <div class="action-buttons-group">
+              <!-- Stop Stream Button -->
+              <button type="button" id="stopBtn" class="btn-stop hidden" title="Stop response generation">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+                </svg>
+                <span>Halt</span>
+              </button>
+
+              <!-- Send Button -->
+              <button type="submit" id="sendBtn" class="btn-send" title="Send question to BioMistral">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="input-meta-bar">
+          <div class="meta-left">
+            <span class="hint-text"><kbd>Enter</kbd> to submit &nbsp;|&nbsp; <kbd>Shift + Enter</kbd> for multi-line clinical notes</span>
+          </div>
+          <div class="meta-right">
+            <button id="exportSessionBtn" class="text-link-btn" title="Export this consultation as Markdown">
+              <svg class="small-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export Transcript
+            </button>
+            <span class="separator">•</span>
+            <span class="meta-privacy">Single-turn inference • Local private session</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Settings Modal Drawer -->
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <h3>Inference Tuning</h3>
+        </div>
+        <button id="closeSettingsBtn" class="close-btn" aria-label="Close settings">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="param-row">
+          <div class="param-info">
+            <label for="tempInput">Temperature</label>
+            <span class="param-hint">Controls medical output determinism (Lower = more focused)</span>
+          </div>
+          <div class="param-control">
+            <input type="range" id="tempInput" min="0.0" max="1.0" step="0.05" value="0.3">
+            <span id="tempVal" class="param-val">0.30</span>
+          </div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-info">
+            <label for="maxTokensInput">Max Generation Tokens</label>
+            <span class="param-hint">Upper limit on answer response length</span>
+          </div>
+          <div class="param-control">
+            <input type="range" id="maxTokensInput" min="64" max="1024" step="32" value="512">
+            <span id="maxTokensVal" class="param-val">512</span>
+          </div>
+        </div>
+
+        <div class="param-row">
+          <div class="param-info">
+            <label for="topPInput">Top-P Sampling</label>
+            <span class="param-hint">Nucleus filtering probability threshold</span>
+          </div>
+          <div class="param-control">
+            <input type="range" id="topPInput" min="0.1" max="1.0" step="0.05" value="0.90">
+            <span id="topPVal" class="param-val">0.90</span>
+          </div>
+        </div>
+
+        <div class="param-diagnostic">
+          <div class="diag-header">Target Model Verification:</div>
+          <div class="diag-item"><code>Model: biomistral-med</code></div>
+          <div class="diag-item"><code>Backend Host: http://localhost:11434</code></div>
+          <div class="diag-item"><code>Template: ### Instruction:\n{{ .Prompt }}\n\n### Input:\n\n\n### Response:</code></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="resetParamsBtn" class="btn btn-secondary">Reset to Defaults</button>
+        <button id="saveParamsBtn" class="btn btn-primary">Apply Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
 </body>
 </html>

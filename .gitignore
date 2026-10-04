@@ -7,3 +7,5 @@ test_scripts/
 finetuned_model.zip
 biomistral-med-q4_k_m.gguf
 *.mp4
+__pycache__/
+*.py[cod]
