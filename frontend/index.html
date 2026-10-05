@@ -14,6 +14,19 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+  <!-- Animated Wave Background -->
+  <div class="wave-bg" aria-hidden="true">
+    <svg class="wave-layer-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="#0d9488" d="M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,176C672,171,768,181,864,192C960,203,1056,213,1152,202.7C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+    <svg class="wave-layer-2" viewBox="0 0 1440 320" preserveAspectRatio="none" style="opacity: 0.6;">
+      <path fill="#06b6d4" d="M0,256L48,245.3C96,235,192,213,288,202.7C384,192,480,192,576,202.7C672,213,768,235,864,245.3C960,256,1056,256,1152,240C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+    <svg class="wave-layer-3" viewBox="0 0 1440 320" preserveAspectRatio="none" style="opacity: 0.4;">
+      <path fill="#14b8a6" d="M0,128L48,138.7C96,149,192,171,288,176C384,181,480,171,576,160C672,149,768,139,864,133.3C960,128,1056,128,1152,138.7C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+
   <!-- Main Application Wrapper -->
   <div class="app-layout">
     
@@ -173,6 +186,7 @@
       <span>Latest Update</span>
     </button>
 
+    <!-- INPUT WIDTH: Controlled by .input-dock and .input-dock-inner max-width in style.css (currently 1100px) -->
     <!-- Sticky Bottom Input Section -->
     <footer class="input-dock">
       <div class="input-dock-inner">
@@ -211,22 +225,16 @@
           </div>
         </form>
 
-        <div class="input-meta-bar">
-          <div class="meta-left">
-            <span class="hint-text"><kbd>Enter</kbd> to submit &nbsp;|&nbsp; <kbd>Shift + Enter</kbd> for multi-line clinical notes</span>
-          </div>
-          <div class="meta-right">
-            <button id="exportSessionBtn" class="text-link-btn" title="Export this consultation as Markdown">
-              <svg class="small-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Export Transcript
-            </button>
-            <span class="separator">•</span>
-            <span class="meta-privacy">Single-turn inference • Local private session</span>
-          </div>
+        <div class="floating-hint">
+          <kbd>Enter</kbd> to send &nbsp;|&nbsp; <kbd>Shift + Enter</kbd> new line
+          <button id="exportSessionBtn" class="text-link-btn" title="Export this consultation as Markdown">
+            <svg class="small-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export
+          </button>
         </div>
       </div>
     </footer>

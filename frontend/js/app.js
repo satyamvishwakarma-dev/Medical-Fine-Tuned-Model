@@ -150,12 +150,23 @@ async function checkBackendHealth() {
 }
 
 // ==========================================================================
-// Scroll Management
+// Scroll Management - Smooth Scrolling
 // ==========================================================================
 function scrollToBottom(force = false) {
   if (force || !state.userScrolledUp) {
-    elements.chatContainer.scrollTop = elements.chatContainer.scrollHeight;
+    elements.chatContainer.scrollTo({
+      top: elements.chatContainer.scrollHeight,
+      behavior: 'smooth'
+    });
   }
+}
+
+// Smooth scroll for scroll-to-bottom button
+function smoothScrollToBottom() {
+  elements.chatContainer.scrollTo({
+    top: elements.chatContainer.scrollHeight,
+    behavior: 'smooth'
+  });
 }
 
 function handleContainerScroll() {
