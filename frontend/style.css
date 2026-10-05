@@ -193,38 +193,65 @@ body {
 }
 
 /* ==========================================================================
-   Frosted Glass Clinical Title Bar (Header) - Enhanced Glass Effect
+   Floating Frosted Glass Navigation Pill - Rounded Full Corners
    ========================================================================== */
 .clinical-header {
-  height: 72px;
-  width: 100%;
-  padding: 0 2.5rem;
-  background: linear-gradient(180deg, rgba(6, 182, 212, 0.06), rgba(4, 8, 20, 0.65));
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border-bottom: 1px solid rgba(6, 182, 212, 0.22);
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 1400px;
+  height: 68px;
+  padding: 0 1.5rem;
+  background: linear-gradient(135deg, 
+    rgba(6, 182, 212, 0.08) 0%, 
+    rgba(4, 8, 20, 0.75) 50%, 
+    rgba(10, 16, 31, 0.85) 100%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  border-radius: 18px;
   box-shadow: 
-    0 4px 40px rgba(0, 0, 0, 0.7),
-    0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 48px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(6, 182, 212, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
     inset 0 -1px 0 rgba(6, 182, 212, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 30;
+  z-index: 50;
   flex-shrink: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s ease,
+              background 0.3s ease;
 }
 
 .clinical-header::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.4), transparent);
+  inset: 1px;
+  border-radius: 17px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent 40%, rgba(6,182,212,0.03));
   pointer-events: none;
+}
+
+/* Scroll hide/show behavior */
+.clinical-header--hidden {
+  transform: translateX(-50%) translateY(-120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.clinical-header:hover {
+  box-shadow: 
+    0 12px 60px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(6, 182, 212, 0.3),
+    0 0 30px rgba(6, 182, 212, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.35);
 }
 
 .header-left {
@@ -482,6 +509,41 @@ body {
   z-index: 25;
   flex-shrink: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  /* Account for floating header (0.75rem top + 68px height + gap) */
+  margin-top: 5.6rem;
+  max-height: 120px;
+  overflow: hidden;
+  transition: opacity 0.4s ease, max-height 0.4s ease, margin 0.4s ease, padding 0.4s ease;
+}
+
+.medical-disclaimer-strip.disclaimer-hidden {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 5.6rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: none;
+  pointer-events: none;
+}
+
+/* Compact permanent disclaimer below the textbox */
+.footer-disclaimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--disclaimer-text);
+  opacity: 0.85;
+  text-align: center;
+  padding: 0 0.5rem;
+}
+
+.footer-disclaimer svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 .disclaimer-content {
@@ -524,7 +586,9 @@ body {
   flex: 1;
   width: 100%;
   overflow-y: auto;
-  padding: 2rem 3rem 10rem 3rem;
+  /* Top padding: floating header (68px + 1rem top + 1rem gap) ≈ 110px
+     Bottom padding: floating input dock (≈120px) + 1.5rem bottom */
+  padding: 7rem 2rem 9rem 2rem;
   scroll-behavior: auto;
   display: flex;
   flex-direction: column;
@@ -956,8 +1020,8 @@ body {
    Floating Scroll-To-Bottom Pill with Neon Glow
    ========================================================================== */
 .scroll-bottom-pill {
-  position: absolute;
-  bottom: 100px;
+  position: fixed;
+  bottom: 12.5rem;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(8, 14, 28, 0.85);
@@ -974,7 +1038,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  z-index: 35;
+  z-index: 45;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   animation: bounceDown 2.2s infinite;
 }
@@ -998,45 +1062,45 @@ body {
 }
 
 /* ==========================================================================
-   Floating Input Box (No Bottom Bar)
+   Compact Cozy Input Box (80% width, centered)
    ========================================================================== */
-/* INPUT WIDTH SETTING: Adjust max-width here to change input box width */
 .input-dock {
-  position: absolute;
-  bottom: 2rem;
+  position: fixed;
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  width: auto;
-  max-width: 1100px;  /* ← INPUT BOX WIDTH (was 900px) */
+  width: 80%;
+  max-width: 900px;
+  padding: 0;
+  box-sizing: border-box;
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border: none;
   box-shadow: none;
-  padding: 0;
-  z-index: 30;
+  z-index: 40;
 }
 
 .input-dock-inner {
-  max-width: 1100px;  /* ← INPUT BOX WIDTH (was 900px) */
   width: 100%;
+  max-width: 900px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.4rem;
 }
 
-/* Glass Input Box - Floating */
+/* Glass Input Box - Compact Cozy */
 .input-box-wrapper {
-  background: linear-gradient(135deg, rgba(8, 14, 28, 0.75), rgba(4, 8, 20, 0.85));
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1.5px solid rgba(6, 182, 212, 0.25);
-  border-radius: var(--radius-lg);
-  padding: 0.65rem 1rem;
+  background: linear-gradient(135deg, rgba(8, 14, 28, 0.78), rgba(4, 8, 20, 0.88));
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 14px;
+  padding: 0.5rem 0.8rem;
   display: flex;
   align-items: flex-end;
-  gap: 0.85rem;
+  gap: 0.6rem;
   box-shadow: 
     0 12px 48px rgba(0, 0, 0, 0.6),
     0 0 40px rgba(6, 182, 212, 0.12),
@@ -1050,7 +1114,7 @@ body {
   content: '';
   position: absolute;
   inset: 1px;
-  border-radius: calc(var(--radius-lg) - 1px);
+  border-radius: 13px;
   background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 40%);
   pointer-events: none;
 }
@@ -1414,11 +1478,21 @@ body {
   .clinical-header {
     padding: 0 1.5rem;
   }
+  .medical-disclaimer-strip {
+    margin-top: 5.3rem;
+  }
+  .medical-disclaimer-strip.disclaimer-hidden {
+    margin-top: 5.3rem;
+  }
   .chat-container {
-    padding: 1.5rem 1.5rem 7.5rem 1.5rem;
+    padding: 6rem 1.5rem 9rem 1.5rem;
   }
   .input-dock {
-    padding: 0.85rem 1.5rem 0.65rem 1.5rem;
+    width: 88%;
+    bottom: 1rem;
+  }
+  .footer-disclaimer {
+    font-size: 0.66rem;
   }
 }
 
@@ -1436,9 +1510,13 @@ body {
   .medical-disclaimer-strip {
     padding: 0.5rem 1rem;
     font-size: 0.74rem;
+    margin-top: 5.1rem;
+  }
+  .medical-disclaimer-strip.disclaimer-hidden {
+    margin-top: 5.1rem;
   }
   .chat-container {
-    padding: 1rem 1rem 7.5rem 1rem;
+    padding: 5.5rem 1rem 9.5rem 1rem;
   }
   .welcome-card {
     padding: 1.5rem;
@@ -1453,7 +1531,17 @@ body {
     max-width: 92%;
   }
   .input-dock {
-    padding: 0.65rem 1rem 0.5rem 1rem;
+    width: calc(100% - 1rem);
+    bottom: 0.75rem;
+  }
+  .scroll-bottom-pill {
+    bottom: 13.5rem;
+  }
+  .footer-disclaimer span {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .input-meta-bar {
     flex-direction: column;

@@ -12,6 +12,7 @@ const state = {
   userScrolledUp: false,
   streamStartTime: null,
   tokenCount: 0,
+  lastScrollTop: 0,
   settings: {
     temperature: 0.30,
     maxTokens: 512,
@@ -48,7 +49,8 @@ const elements = {
   topPVal: document.getElementById("topPVal"),
   exportSessionBtn: document.getElementById("exportSessionBtn"),
   disclaimerStrip: document.querySelector(".medical-disclaimer-strip"),
-  disclaimerDismiss: document.querySelector(".disclaimer-dismiss")
+  disclaimerDismiss: document.querySelector(".disclaimer-dismiss"),
+  clinicalHeader: document.querySelector(".clinical-header")
 };
 
 // ==========================================================================
@@ -167,6 +169,10 @@ function smoothScrollToBottom() {
     top: elements.chatContainer.scrollHeight,
     behavior: 'smooth'
   });
+  // Show header when user manually scrolls to bottom
+  if (elements.clinicalHeader) {
+    elements.clinicalHeader.classList.remove("clinical-header--hidden");
+  }
 }
 
 function handleContainerScroll() {
@@ -179,6 +185,29 @@ function handleContainerScroll() {
   } else {
     state.userScrolledUp = false;
     elements.scrollToBottomBtn.classList.add("hidden");
+  }
+
+  // Floating header hide/show on scroll direction
+  if (elements.clinicalHeader) {
+    const currentScrollTop = elements.chatContainer.scrollTop;
+    const scrollDelta = currentScrollTop - state.lastScrollTop;
+    
+    // Always show header at very top
+    if (currentScrollTop <= 0) {
+      elements.clinicalHeader.classList.remove("clinical-header--hidden");
+    }
+    // Only hide/show if scrolled more than 5px to avoid flicker
+    else if (Math.abs(scrollDelta) > 5) {
+      if (scrollDelta > 0 && currentScrollTop > 100) {
+        // Scrolling down - hide header
+        elements.clinicalHeader.classList.add("clinical-header--hidden");
+      } else if (scrollDelta < 0) {
+        // Scrolling up - show header
+        elements.clinicalHeader.classList.remove("clinical-header--hidden");
+      }
+    }
+    
+    state.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // Prevent negative values
   }
 }
 
@@ -572,11 +601,18 @@ function setupEventListeners() {
   // Export Transcript
   elements.exportSessionBtn.addEventListener("click", exportConsultationTranscript);
 
-  // Dismiss Disclaimer
+  // Dismiss Disclaimer (top strip fades; footer copy stays)
   if (elements.disclaimerDismiss) {
     elements.disclaimerDismiss.addEventListener("click", () => {
-      elements.disclaimerStrip.style.display = "none";
+      elements.disclaimerStrip.classList.add("disclaimer-hidden");
     });
+  }
+
+  // Auto-fade top disclaimer after 2s
+  if (elements.disclaimerStrip) {
+    setTimeout(() => {
+      elements.disclaimerStrip.classList.add("disclaimer-hidden");
+    }, 2000);
   }
 }
 
