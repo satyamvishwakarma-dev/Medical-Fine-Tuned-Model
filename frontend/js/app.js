@@ -50,7 +50,9 @@ const elements = {
   exportSessionBtn: document.getElementById("exportSessionBtn"),
   disclaimerStrip: document.querySelector(".medical-disclaimer-strip"),
   disclaimerDismiss: document.querySelector(".disclaimer-dismiss"),
-  clinicalHeader: document.querySelector(".clinical-header")
+  clinicalHeader: document.querySelector(".clinical-header"),
+  emptyHint: document.getElementById("emptyHint"),
+  footerDisclaimer: document.getElementById("footerDisclaimer")
 };
 
 // ==========================================================================
@@ -59,6 +61,8 @@ const elements = {
 function init() {
   loadSavedSettings();
   setupEventListeners();
+  updateEmptyHint();
+  updateSendState();
   checkBackendHealth();
   // Poll health every 20 seconds
   setInterval(checkBackendHealth, 20000);
@@ -221,6 +225,7 @@ async function handleSubmit(promptText) {
   // Clear input box and reset height
   elements.userInput.value = "";
   elements.userInput.style.height = "auto";
+  updateSendState();
 
   // Hide welcome triage card once consultation starts
   if (elements.welcomeCard) {
@@ -229,6 +234,7 @@ async function handleSubmit(promptText) {
 
   // 1. Render User Message Bubble
   renderUserMessage(prompt);
+  updateEmptyHint();
   scrollToBottom(true);
 
   // 2. Prepare Assistant Bubble with placeholder & typing cursor
@@ -325,14 +331,49 @@ async function handleSubmit(promptText) {
 
 function setStreamingState(isStreaming) {
   state.isStreaming = isStreaming;
+  document.body.classList.toggle("streaming", isStreaming);
   if (isStreaming) {
-    elements.sendBtn.disabled = true;
     elements.stopBtn.classList.remove("hidden");
   } else {
-    elements.sendBtn.disabled = false;
     elements.stopBtn.classList.add("hidden");
     state.abortController = null;
   }
+  updateSendState();
+}
+
+// Send enabled only when streaming is off and input has text
+function updateSendState() {
+  if (!elements.sendBtn || !elements.userInput) return;
+  elements.sendBtn.disabled = state.isStreaming || elements.userInput.value.trim() === "";
+}
+
+// Slider fill-track paint (cyan fill up to thumb)
+function paintRange(el) {
+  if (!el || !el.min || !el.max) return;
+  const pct = ((Number(el.value) - Number(el.min)) / (Number(el.max) - Number(el.min))) * 100;
+  el.style.setProperty("--fill", pct.toFixed(1) + "%");
+}
+
+function paintAllRanges() {
+  [elements.tempInput, elements.maxTokensInput, elements.topPInput].forEach(paintRange);
+}
+
+// Top disclaimer -> footer disclaimer handoff (never doubled, never absent)
+function hideTopDisclaimer() {
+  if (elements.disclaimerStrip) {
+    elements.disclaimerStrip.classList.add("disclaimer-hidden");
+  }
+  if (elements.footerDisclaimer) {
+    elements.footerDisclaimer.classList.add("show");
+  }
+}
+
+// Empty-state ghost hint: show only when welcome dismissed and no messages yet
+function updateEmptyHint() {
+  if (!elements.emptyHint) return;
+  const welcomeVisible = elements.welcomeCard && elements.welcomeCard.style.display !== "none";
+  const hasMessages = elements.messagesFeed.querySelector(".message-card") !== null;
+  elements.emptyHint.classList.toggle("hidden", welcomeVisible || hasMessages);
 }
 
 // ==========================================================================
@@ -514,10 +555,11 @@ function setupEventListeners() {
     }
   });
 
-  // Auto-grow textarea
+  // Auto-grow textarea + send-button state
   elements.userInput.addEventListener("input", function() {
     this.style.height = "auto";
-    this.style.height = Math.min(this.scrollHeight, 140) + "px";
+    this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    updateSendState();
   });
 
   // Stop Generation button
@@ -552,6 +594,7 @@ function setupEventListeners() {
     if (elements.welcomeCard) {
       elements.welcomeCard.style.display = "block";
     }
+    updateEmptyHint();
     scrollToBottom(true);
   });
 
@@ -571,16 +614,20 @@ function setupEventListeners() {
     }
   });
 
-  // Sliders value feedback
+  // Sliders value feedback + fill-track paint
   elements.tempInput.addEventListener("input", (e) => {
     elements.tempVal.textContent = Number(e.target.value).toFixed(2);
+    paintRange(e.target);
   });
   elements.maxTokensInput.addEventListener("input", (e) => {
     elements.maxTokensVal.textContent = e.target.value;
+    paintRange(e.target);
   });
   elements.topPInput.addEventListener("input", (e) => {
     elements.topPVal.textContent = Number(e.target.value).toFixed(2);
+    paintRange(e.target);
   });
+  paintAllRanges();
 
   // Settings Actions
   elements.saveParamsBtn.addEventListener("click", () => {
@@ -595,24 +642,23 @@ function setupEventListeners() {
     elements.maxTokensVal.textContent = "512";
     elements.topPInput.value = 0.90;
     elements.topPVal.textContent = "0.90";
+    paintAllRanges();
     saveSettings();
   });
 
   // Export Transcript
   elements.exportSessionBtn.addEventListener("click", exportConsultationTranscript);
 
-  // Dismiss Disclaimer (top strip fades; footer copy stays)
+  // Dismiss Disclaimer (top strip fades, footer copy fades in)
   if (elements.disclaimerDismiss) {
     elements.disclaimerDismiss.addEventListener("click", () => {
-      elements.disclaimerStrip.classList.add("disclaimer-hidden");
+      hideTopDisclaimer();
     });
   }
 
-  // Auto-fade top disclaimer after 2s
+  // Auto-fade top disclaimer after 2s, footer copy takes over
   if (elements.disclaimerStrip) {
-    setTimeout(() => {
-      elements.disclaimerStrip.classList.add("disclaimer-hidden");
-    }, 2000);
+    setTimeout(hideTopDisclaimer, 2000);
   }
 }
 
